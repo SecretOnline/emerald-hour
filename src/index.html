@@ -25,13 +25,17 @@
     body {
       margin: 0;
       padding: 8px;
+
       font-family: 'JetBrains Mono', monospace;
+
       min-width: 100%;
       min-height: 100vh;
+
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+
       font-size: 1.5em;
       text-align: center;
       overflow: hidden;
@@ -48,6 +52,41 @@
 
     #when {
       font-weight: 300;
+    }
+
+    .emerald {
+      animation: emerald 5s cubic-bezier(0.75, 0, 1, 1) both infinite;
+      position: fixed;
+      z-index: -1;
+
+      width: 48px;
+      height: 48px;
+
+      background-image: url(/emerald-64.png);
+      background-size: cover;
+
+      top:0;
+      left:0;
+    }
+
+    @keyframes emerald {
+      0% {
+        transform: translateY(-3em);
+        opacity: 0;
+      }
+
+      20% {
+        opacity: 1;
+      }
+
+      60% {
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(3em);
+        opacity: 0;
+      }
     }
   </style>
   <script defer>
@@ -68,6 +107,49 @@
        * @type {number | undefined}
        */
       let animationFrameHandle;
+
+      function randomisePosition(element) {
+        element.style.top = `${Math.random() * ((window.innerHeight + 48) - 24)}px`;
+        element.style.left = `${Math.random() * ((window.innerWidth + 48) - 24)}px`;
+      }
+
+      function createEmerald() {
+        const element = document.createElement('span');
+        element.classList.add('emerald');
+
+        element.addEventListener('animationiteration', function() {
+          // Move to somewhere else
+          randomisePosition(element);
+        });
+
+        return element;
+      }
+
+      function generateEmeraldField(isTime) {
+        const oldContainer = document.querySelector('#emerald-container');
+        if (oldContainer) {
+          oldContainer.remove();
+        }
+
+        const numEmeralds = (window.innerWidth * window.innerHeight) / (isTime ? 50000 : 100000);
+        console.log(`doing ${numEmeralds}`);
+
+        const emeraldContainer = document.createElement('div');
+        emeraldContainer.id = 'emerald-container';
+
+        for (let i = 0; i < numEmeralds; i++) {
+          const element = createEmerald();
+          randomisePosition(element);
+          element.style.animationDelay = `${(i / numEmeralds) * 5}s`;
+          emeraldContainer.appendChild(element);
+        }
+
+        document.body.appendChild(emeraldContainer)
+      }
+
+      window.addEventListener("resize", function() {
+        generateEmeraldField(isItEmeraldHour());
+      });
 
       function isItEmeraldHour() {
         /** @type {{ type: string; value: string }[]} */
@@ -95,8 +177,9 @@
           } else {
             answerElement.textContent = 'No';
           }
-
           currentState = result;
+
+          generateEmeraldField(result);
         }
 
         // TODO: Add timer
