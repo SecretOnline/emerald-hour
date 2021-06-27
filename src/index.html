@@ -5,6 +5,49 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Is it Emerald Hour?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-width: 100vw;
+      min-height: 100vh;
+      background: rgb(26,255,127);
+      background: linear-gradient(145deg, #00A000 0%, #007A00 35%, #004700 100%);
+    }
+
+    body {
+      margin: 0;
+      padding: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      min-width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5em;
+      text-align: center;
+      overflow: hidden;
+      color: #FFFFFF;
+    }
+
+    #question {
+      font-weight: 300;
+    }
+
+    #answer {
+      font-weight: 700;
+    }
+
+    #when {
+      font-weight: 300;
+    }
+  </style>
   <script defer>
     document.addEventListener('DOMContentLoaded', function () {
       /**
@@ -72,7 +115,7 @@
   </script>
 </head>
 <body>
-  <h1>Is it Emerald Hour?</h1>
+  <h1 id="question">Is it Emerald Hour?</h1>
   <h2 id="answer">I dunno</h2>
   <p id="when">Emerald Hour starts around 7:30pm (New Zealand time), and ends around 9:00pm.</p>
 </body>
