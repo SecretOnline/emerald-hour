@@ -99,6 +99,7 @@
        * @type {boolean | undefined}
        */
       let currentState = undefined;
+      let override = undefined;
 
       const answerElement = document.querySelector('#answer');
 
@@ -131,8 +132,8 @@
           oldContainer.remove();
         }
 
-        const numEmeralds = (window.innerWidth * window.innerHeight) / (isTime ? 50000 : 100000);
-        console.log(`doing ${numEmeralds}`);
+        const numEmeralds = Math.floor((window.innerWidth * window.innerHeight) / (isTime ? 20000 : 200000));
+        console.log(`Creating ${numEmeralds} emeralds`);
 
         const emeraldContainer = document.createElement('div');
         emeraldContainer.id = 'emerald-container';
@@ -168,7 +169,7 @@
       }
 
       function onFrame() {
-        const result = isItEmeraldHour();
+        const result = (override === undefined) ? isItEmeraldHour() : override;
 
         // Only update the DOM if necessary
         if (result !== currentState) {
@@ -196,6 +197,10 @@
       }
 
       animationFrameHandle = requestAnimationFrame(animFrameLoop);
+
+      window.setEmeraldState = function(state) {
+        override = state;
+      }
     });
   </script>
 </head>
