@@ -88,6 +88,80 @@
           opacity: 0;
         }
       }
+
+      .trader,
+      .llama {
+        position: fixed;
+        z-index: -1;
+
+        top: 50vh;
+        left: 50vw;
+      }
+
+      .zoomies {
+        animation-name: zoomies;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+        position: relative;
+
+        top: 0;
+        left: 0;
+      }
+
+      .llama-image,
+      .trader-image {
+        animation: spin 2s linear infinite;
+        position: relative;
+        content: ' ';
+
+        background-size: cover;
+
+        top: 0;
+        left: 0;
+      }
+
+      .trader-image {
+        width: 92px;
+        height: 185px;
+        background-image: url(/trader.png);
+      }
+
+      .llama-image {
+        width: 92px;
+        height: 141px;
+      }
+      .llama-image.white {
+        background-image: url(/llama-white.png);
+      }
+      .llama-image.gray {
+        background-image: url(/llama-gray.png);
+      }
+      .llama-image.cream {
+        background-image: url(/llama-cream.png);
+      }
+      .llama-image.brown {
+        background-image: url(/llama-brown.png);
+      }
+
+      @keyframes zoomies {
+        0% {
+          transform: translateX(-100vmax);
+        }
+
+        100% {
+          transform: translateX(200vmax);
+        }
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0);
+        }
+
+        100% {
+          transform: rotate(360deg);
+        }
+      }
     </style>
     <script defer>
       document.addEventListener('DOMContentLoaded', function () {
@@ -109,21 +183,79 @@
          */
         let animationFrameHandle;
 
-        function randomisePosition(element) {
-          element.style.top = `${Math.random() * (window.innerHeight + 48 - 24)}px`;
-          element.style.left = `${Math.random() * (window.innerWidth + 48 - 24)}px`;
-        }
-
         function createEmerald() {
-          const element = document.createElement('span');
+          const element = document.createElement('div');
           element.classList.add('emerald');
 
-          element.addEventListener('animationiteration', function () {
-            // Move to somewhere else
-            randomisePosition(element);
-          });
+          function onIteration() {
+            element.style.top = `${Math.random() * (window.innerHeight + 48 - 24)}px`;
+            element.style.left = `${Math.random() * (window.innerWidth + 48 - 24)}px`;
+          }
+          element.addEventListener('animationiteration', onIteration);
+          onIteration();
 
           return element;
+        }
+
+        function createTrader() {
+          const container = document.createElement('div');
+          container.classList.add('trader');
+          const zoomies = document.createElement('div');
+          zoomies.classList.add('zoomies');
+          container.appendChild(zoomies);
+          const image = document.createElement('div');
+          image.classList.add('trader-image');
+          zoomies.appendChild(image);
+
+          const zoomDuration = 10 + Math.random() * 5;
+          zoomies.style.animationDuration = `${zoomDuration}s`;
+
+          function onIteration(event) {
+            if (event.target === zoomies) {
+              const rotation = (Math.random() - 0.5) * 360;
+              const degreesFromVertical = Math.abs(Math.abs(rotation - 180) - 90);
+              const yOffset = Math.random() * degreesFromVertical * 0.5;
+
+              container.style.top = `${yOffset + 50}vh`;
+              container.style.transform = `rotate(${rotation}deg) translateX(-50vmax)`;
+            }
+          }
+          zoomies.addEventListener('animationiteration', onIteration);
+          onIteration({ target: zoomies });
+
+          return container;
+        }
+
+        function createLlama() {
+          const container = document.createElement('div');
+          container.classList.add('llama');
+          const zoomies = document.createElement('div');
+          zoomies.classList.add('zoomies');
+          container.appendChild(zoomies);
+          const image = document.createElement('div');
+          image.classList.add('llama-image');
+          zoomies.appendChild(image);
+
+          const zoomDuration = 6 + Math.random() * 5;
+          zoomies.style.animationDuration = `${zoomDuration}s`;
+
+          function onIteration(event) {
+            if (event.target === zoomies) {
+              const rotation = (Math.random() - 0.5) * 360;
+              const degreesFromVertical = Math.abs(Math.abs(rotation - 180) - 90);
+              const yOffset = Math.random() * degreesFromVertical * 0.25;
+
+              container.style.top = `${yOffset + 25}vh`;
+              container.style.transform = `rotate(${rotation}deg) translateX(-50vmax)`;
+
+              image.classList.remove('white', 'gray', 'cream', 'brown');
+              image.classList.add(['white', 'gray', 'cream', 'brown'][Math.floor(Math.random() * 4)]);
+            }
+          }
+          zoomies.addEventListener('animationiteration', onIteration);
+          onIteration({ target: zoomies });
+
+          return container;
         }
 
         function generateEmeraldField(isTime) {
@@ -140,10 +272,15 @@
 
           for (let i = 0; i < numEmeralds; i++) {
             const element = createEmerald();
-            randomisePosition(element);
-            element.style.animationDelay = `${(i / numEmeralds) * 5}s`;
+            element.style.animationDelay = `${((i + 1) / numEmeralds) * 5 - 5}s`;
             emeraldContainer.appendChild(element);
           }
+
+          // if (isTime) {
+          emeraldContainer.appendChild(createTrader());
+          emeraldContainer.appendChild(createLlama());
+          emeraldContainer.appendChild(createLlama());
+          // }
 
           document.body.appendChild(emeraldContainer);
         }
@@ -165,7 +302,7 @@
 
           const isInTimeRange = hours === 19 ? minutes >= 30 : hours > 19 && hours < 21;
 
-          return override === undefined ? isItEmeraldHour() : override;
+          return override === undefined ? isInTimeRange : override;
         }
 
         function onFrame() {
