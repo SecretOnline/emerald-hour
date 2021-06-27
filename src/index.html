@@ -163,13 +163,15 @@
         const hours = parseInt(parts.find(({type}) => type === 'hour').value);
         const minutes = parseInt(parts.find(({type}) => type === 'minute').value);
 
-        return (hours === 19)
+        const isInTimeRange = (hours === 19)
           ? minutes >= 30
           : (hours > 19 && hours < 21);
+
+        return (override === undefined) ? isItEmeraldHour() : override;
       }
 
       function onFrame() {
-        const result = (override === undefined) ? isItEmeraldHour() : override;
+        const result = isItEmeraldHour();
 
         // Only update the DOM if necessary
         if (result !== currentState) {
