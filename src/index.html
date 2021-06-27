@@ -276,11 +276,11 @@
             emeraldContainer.appendChild(element);
           }
 
-          // if (isTime) {
-          emeraldContainer.appendChild(createTrader());
-          emeraldContainer.appendChild(createLlama());
-          emeraldContainer.appendChild(createLlama());
-          // }
+          if (isTime) {
+            emeraldContainer.appendChild(createTrader());
+            emeraldContainer.appendChild(createLlama());
+            emeraldContainer.appendChild(createLlama());
+          }
 
           document.body.appendChild(emeraldContainer);
         }
