@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Is it Emerald Hour?</title>
+  <script defer>
+    document.addEventListener('DOMContentLoaded', function () {
+      /**
+       * The current state of the app
+       * * `undefined`: loading
+       * * `true`: It is emerald hour
+       * * `false`: It is not emerald hour
+       * @type {boolean | undefined}
+       */
+      let currentState = undefined;
+
+      const answerElement = document.querySelector('#answer');
+
+      /**
+       * Hold a reference to the animation frame handle in case we want to cancel it.
+       * @type {number | undefined}
+       */
+      let animationFrameHandle;
+
+      function isItEmeraldHour() {
+        /** @type {{ type: string; value: string }[]} */
+        const parts = new Intl.DateTimeFormat('en-GB', {
+          timeZone: 'Pacific/Auckland',
+          hour:'numeric',
+          minute:'numeric',
+        }).formatToParts(new Date());
+
+        const hours = parseInt(parts.find(({type}) => type === 'hour').value);
+        const minutes = parseInt(parts.find(({type}) => type === 'minute').value);
+
+        return (hours === 19)
+          ? minutes >= 30
+          : (hours > 19 && hours < 21);
+      }
+
+      function onFrame() {
+        const result = isItEmeraldHour();
+
+        // Only update the DOM if necessary
+        if (result !== currentState) {
+          if (result) {
+            answerElement.textContent = 'Yes';
+          } else {
+            answerElement.textContent = 'No';
+          }
+
+          currentState = result;
+        }
+
+        // TODO: Add timer
+      }
+
+      function animFrameLoop() {
+        try {
+          onFrame();
+        } catch (err) {
+          console.error('Frame error', err);
+        }
+
+        animationFrameHandle = requestAnimationFrame(animFrameLoop);
+      }
+
+      animationFrameHandle = requestAnimationFrame(animFrameLoop);
+    });
+  </script>
+</head>
+<body>
+  <h1>Is it Emerald Hour?</h1>
+  <h2 id="answer">I dunno</h2>
+  <p id="when">Emerald Hour starts around 7:30pm (New Zealand time), and ends around 9:00pm.</p>
+</body>
+</html>
