@@ -69,6 +69,10 @@
         left: 0;
       }
 
+      .diamond {
+        background-image: url(/diamond-64.png);
+      }
+
       @keyframes emerald {
         0% {
           transform: translateY(-3em);
@@ -183,13 +187,20 @@
          */
         let animationFrameHandle;
 
-        function createEmerald() {
+        function createEmerald(numEmeralds, index) {
           const element = document.createElement('div');
           element.classList.add('emerald');
+          element.style.animationDelay = `${((index + 1) / numEmeralds) * 5 - 5}s`;
 
           function onIteration() {
             element.style.top = `${Math.random() * (window.innerHeight + 48 - 24)}px`;
             element.style.left = `${Math.random() * (window.innerWidth + 48 - 24)}px`;
+
+            if (Math.random() < 1 / (20 * numEmeralds)) {
+              element.classList.add('diamond');
+            } else {
+              element.classList.remove('diamond');
+            }
           }
           element.addEventListener('animationiteration', onIteration);
           onIteration();
@@ -271,9 +282,7 @@
           emeraldContainer.id = 'emerald-container';
 
           for (let i = 0; i < numEmeralds; i++) {
-            const element = createEmerald();
-            element.style.animationDelay = `${((i + 1) / numEmeralds) * 5 - 5}s`;
-            emeraldContainer.appendChild(element);
+            emeraldContainer.appendChild(createEmerald(numEmeralds, i));
           }
 
           if (isTime) {
