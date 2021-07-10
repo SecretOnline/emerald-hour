@@ -62,7 +62,7 @@
         width: 48px;
         height: 48px;
 
-        background-image: url(/emerald-64.png);
+        background-image: url(emerald-64.png);
         background-size: cover;
 
         top: 0;
@@ -70,7 +70,7 @@
       }
 
       .diamond {
-        background-image: url(/diamond-64.png);
+        background-image: url(diamond-64.png);
       }
 
       @keyframes emerald {
@@ -127,7 +127,7 @@
       .trader-image {
         width: 92px;
         height: 185px;
-        background-image: url(/trader.png);
+        background-image: url(trader.png);
       }
 
       .llama-image {
@@ -135,16 +135,41 @@
         height: 141px;
       }
       .llama-image.white {
-        background-image: url(/llama-white.png);
+        background-image: url(llama-white.png);
       }
       .llama-image.gray {
-        background-image: url(/llama-gray.png);
+        background-image: url(llama-gray.png);
       }
       .llama-image.cream {
-        background-image: url(/llama-cream.png);
+        background-image: url(llama-cream.png);
       }
       .llama-image.brown {
-        background-image: url(/llama-brown.png);
+        background-image: url(llama-brown.png);
+      }
+
+      .scout {
+        position: fixed;
+        z-index: -1;
+
+        width: 161px;
+        height: 90px;
+
+        top: 0;
+        left: 0;
+      }
+
+      .scout-image {
+        position: relative;
+
+        width: 100%;
+        height: 100%;
+
+        background-image: url(scout.png);
+        background-size: cover;
+      }
+
+      .scout-anim {
+        animation: scout 10s cubic-bezier(0.75, 0, 1, 1) both;
       }
 
       @keyframes zoomies {
@@ -164,6 +189,24 @@
 
         100% {
           transform: rotate(360deg);
+        }
+      }
+
+      @keyframes scout {
+        0% {
+          transform: translateY(0);
+        }
+
+        15% {
+          transform: translateY(-100%);
+        }
+
+        75% {
+          transform: translateY(-100%);
+        }
+
+        100% {
+          transform: translateY(0);
         }
       }
     </style>
@@ -269,6 +312,45 @@
           return container;
         }
 
+        function createScout() {
+          const element = document.createElement('div');
+          element.classList.add('scout');
+          const scout = document.createElement('div');
+          scout.classList.add('scout-image');
+          element.appendChild(scout);
+
+          function onAnimEnd() {
+            scout.classList.remove('scout-anim');
+            scout.removeEventListener('animationend', onAnimEnd);
+
+            if (currentState || override) {
+              window.setTimeout(function () {
+                onIteration();
+              }, 100000);
+            }
+          }
+
+          function onIteration() {
+            const side = Math.random() >= 0.5 ? 'left' : 'right';
+
+            if (side === 'left') {
+              element.style.transform = 'rotate(90deg)';
+              element.style.top = `${Math.random() * (window.innerHeight - 160)}px`;
+              element.style.left = '-126px';
+            } else {
+              element.style.transform = 'rotate(-90deg)';
+              element.style.top = `${Math.random() * (window.innerHeight - 160)}px`;
+              element.style.left = `calc(100vw - 35px)`;
+            }
+
+            scout.classList.add('scout-anim');
+            scout.addEventListener('animationend', onAnimEnd);
+          }
+          onIteration();
+
+          return element;
+        }
+
         function generateEmeraldField(isTime) {
           const oldContainer = document.querySelector('#emerald-container');
           if (oldContainer) {
@@ -289,6 +371,7 @@
             emeraldContainer.appendChild(createTrader());
             emeraldContainer.appendChild(createLlama());
             emeraldContainer.appendChild(createLlama());
+            emeraldContainer.appendChild(createScout());
           }
 
           document.body.appendChild(emeraldContainer);
