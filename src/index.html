@@ -219,10 +219,20 @@
          * * `false`: It is not emerald hour
          * @type {boolean | undefined}
          */
-        let currentState = undefined;
-        let override = undefined;
+        let currentEmeraldState = undefined;
+        let overrideEmeraldState = undefined;
+        /**
+         * The current state of the app
+         * * `undefined`: loading
+         * * `true`: It is traffic hour
+         * * `false`: It is not traffic hour
+         * @type {boolean | undefined}
+         */
+        let currentTrafficState = undefined;
+        let overrideTrafficState = undefined;
 
         const answerElement = document.querySelector('#answer');
+        const whenElement = document.querySelector('#when');
 
         /**
          * Hold a reference to the animation frame handle in case we want to cancel it.
@@ -323,7 +333,7 @@
             scout.classList.remove('scout-anim');
             scout.removeEventListener('animationend', onAnimEnd);
 
-            if (currentState || override) {
+            if (currentEmeraldState || overrideEmeraldState) {
               window.setTimeout(function () {
                 onIteration();
               }, 100000);
@@ -381,7 +391,7 @@
           generateEmeraldField(isItEmeraldHour());
         });
 
-        function isItEmeraldHour() {
+        function getTime() {
           /** @type {{ type: string; value: string }[]} */
           const parts = new Intl.DateTimeFormat('en-GB', {
             timeZone: 'Pacific/Auckland',
@@ -392,24 +402,57 @@
           const hours = parseInt(parts.find(({ type }) => type === 'hour').value);
           const minutes = parseInt(parts.find(({ type }) => type === 'minute').value);
 
+          return { hours, minutes };
+        }
+
+        function isItEmeraldHour() {
+          if (overrideEmeraldState !== undefined) {
+            return overrideEmeraldState;
+          }
+
+          const { hours, minutes } = getTime();
+
           const isInTimeRange = hours === 19 ? minutes >= 30 : hours > 19 && hours < 21;
 
-          return override === undefined ? isInTimeRange : override;
+          return isInTimeRange;
+        }
+
+        function isItTrafficHour() {
+          if (overrideTrafficState !== undefined) {
+            return overrideTrafficState;
+          }
+
+          const { hours, minutes } = getTime();
+
+          const isMorningRange = hours === 8;
+          const isAfternoonRange = hours === 16 || (hours === 17 ? minutes <= 30 : false);
+
+          return isMorningRange || isAfternoonRange;
         }
 
         function onFrame() {
-          const result = isItEmeraldHour();
+          const isEmerald = isItEmeraldHour();
+          const isTraffic = isItTrafficHour();
 
           // Only update the DOM if necessary
-          if (result !== currentState) {
-            if (result) {
+          if (isEmerald !== currentEmeraldState) {
+            if (isEmerald) {
               answerElement.textContent = 'Yes';
             } else {
               answerElement.textContent = 'No';
             }
-            currentState = result;
+            currentEmeraldState = isEmerald;
 
-            generateEmeraldField(result);
+            generateEmeraldField(isEmerald);
+          }
+
+          // Only update the DOM if necessary
+          if (isTraffic !== currentTrafficState) {
+            if (isTraffic) {
+              whenElement.textContent = 'Please obey all traffic regulations';
+            } else {
+              whenElement.textContent = '';
+            }
           }
 
           // TODO: Add timer
@@ -428,7 +471,10 @@
         animationFrameHandle = requestAnimationFrame(animFrameLoop);
 
         window.setEmeraldState = function (state) {
-          override = state;
+          overrideEmeraldState = state;
+        };
+        window.setTrafficState = function (state) {
+          overrideTrafficState = state;
         };
       });
     </script>
@@ -436,6 +482,6 @@
   <body>
     <h1 id="question">Is it Emerald Hour?</h1>
     <h2 id="answer">I dunno</h2>
-    <!-- <p id="when">Emerald Hour starts around 7:30pm (New Zealand time), and ends around 9:00pm.</p> -->
+    <p id="when"></p>
   </body>
 </html>
