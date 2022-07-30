@@ -412,7 +412,7 @@
 
           const { hours, minutes } = getTime();
 
-          const isInTimeRange = hours === 19 ? minutes >= 30 : hours > 19 && hours < 21;
+          const isInTimeRange = hours > 19 && hours < 22;
 
           return isInTimeRange;
         }
