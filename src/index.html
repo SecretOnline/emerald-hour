@@ -172,6 +172,43 @@
         animation: scout 10s cubic-bezier(0.75, 0, 1, 1) both;
       }
 
+      .dos2 {
+        position: absolute;
+        top: 18px;
+        left: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .dos2-profile {
+        width: 70px;
+        aspect-ratio: 179 / 302;
+        background-size: cover;
+      }
+
+      @media (min-width: 768px) {
+        .dos2-profile {
+          width: 100px;
+        }
+      }
+
+      .dos2-eth {
+        background-image: url(dos2-eth.png);
+      }
+
+      .dos2-alduwynn {
+        background-image: url(dos2-al-du-wynn.png);
+      }
+
+      .dos2-arklandin {
+        background-image: url(dos2-arklandin.png);
+      }
+
+      .dos2-cendelia {
+        background-image: url(dos2-cendelia.png);
+      }
+
       @keyframes zoomies {
         0% {
           transform: translateX(-100vmax);
@@ -361,6 +398,33 @@
           return element;
         }
 
+        function createDos2() {
+          const element = document.createElement('div');
+          element.classList.add('dos2');
+
+          const now = new Date();
+          if (now.getDay() === 1) {
+            const eth = document.createElement('div');
+            eth.classList.add('dos2-profile', 'dos2-eth');
+            element.appendChild(eth);
+
+            const alduwynn = document.createElement('div');
+            alduwynn.classList.add('dos2-profile', 'dos2-alduwynn');
+            element.appendChild(alduwynn);
+          }
+          if (now.getDay() === 2) {
+            const arklandin = document.createElement('div');
+            arklandin.classList.add('dos2-profile', 'dos2-arklandin');
+            element.appendChild(arklandin);
+
+            const cendelia = document.createElement('div');
+            cendelia.classList.add('dos2-profile', 'dos2-cendelia');
+            element.appendChild(cendelia);
+          }
+
+          return element;
+        }
+
         function generateEmeraldField(isTime) {
           const oldContainer = document.querySelector('#emerald-container');
           if (oldContainer) {
@@ -382,6 +446,7 @@
             emeraldContainer.appendChild(createLlama());
             emeraldContainer.appendChild(createLlama());
             emeraldContainer.appendChild(createScout());
+            emeraldContainer.appendChild(createDos2());
           }
 
           document.body.appendChild(emeraldContainer);
