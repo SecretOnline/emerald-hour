@@ -54,6 +54,10 @@
         font-weight: 300;
       }
 
+      .text {
+        text-shadow: black 0 0 5px;
+      }
+
       .emerald {
         animation: emerald 5s cubic-bezier(0.75, 0, 1, 1) both infinite;
         position: fixed;
@@ -545,8 +549,8 @@
     </script>
   </head>
   <body>
-    <h1 id="question">Is it Emerald Hour?</h1>
-    <h2 id="answer">I dunno</h2>
-    <p id="when"></p>
+    <h1 id="question" class="text">Is it Emerald Hour?</h1>
+    <h2 id="answer" class="text">I dunno</h2>
+    <p id="when" class="text"></p>
   </body>
 </html>
