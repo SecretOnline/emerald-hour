@@ -191,12 +191,6 @@
         background-size: cover;
       }
 
-      @media (min-width: 768px) {
-        .dos2-profile {
-          width: 100px;
-        }
-      }
-
       .dos2-eth {
         background-image: url(dos2-eth.png);
       }
@@ -211,6 +205,40 @@
 
       .dos2-cendelia {
         background-image: url(dos2-cendelia.png);
+      }
+
+      .bg3 {
+        position: absolute;
+        top: 50vh;
+        transform: translateY(-50%);
+        left: -2px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .bg3-profile {
+        width: 90px;
+        aspect-ratio: 152 / 218;
+        background-size: cover;
+      }
+
+      .bg3-eth {
+        background-image: url(bg3-eth.png);
+      }
+
+      .bg3-dunevhyr {
+        background-image: url(bg3-du-nevhyr.png);
+      }
+
+      @media (min-width: 768px) {
+        .dos2-profile {
+          width: 100px;
+        }
+
+        .bg3-profile {
+          width: 120px;
+        }
       }
 
       @keyframes zoomies {
@@ -407,15 +435,15 @@
           element.classList.add('dos2');
 
           const now = new Date();
-          if (now.getDay() === 1) {
-            const eth = document.createElement('div');
-            eth.classList.add('dos2-profile', 'dos2-eth');
-            element.appendChild(eth);
+          // if (now.getDay() === 1) {
+          //   const eth = document.createElement('div');
+          //   eth.classList.add('dos2-profile', 'dos2-eth');
+          //   element.appendChild(eth);
 
-            const alduwynn = document.createElement('div');
-            alduwynn.classList.add('dos2-profile', 'dos2-alduwynn');
-            element.appendChild(alduwynn);
-          }
+          //   const alduwynn = document.createElement('div');
+          //   alduwynn.classList.add('dos2-profile', 'dos2-alduwynn');
+          //   element.appendChild(alduwynn);
+          // }
           if (now.getDay() === 2) {
             const arklandin = document.createElement('div');
             arklandin.classList.add('dos2-profile', 'dos2-arklandin');
@@ -424,6 +452,24 @@
             const cendelia = document.createElement('div');
             cendelia.classList.add('dos2-profile', 'dos2-cendelia');
             element.appendChild(cendelia);
+          }
+
+          return element;
+        }
+
+        function createBg3() {
+          const element = document.createElement('div');
+          element.classList.add('bg3');
+
+          const now = new Date();
+          if (now.getDay() === 1 || now.getDay() === 3) {
+            const eth = document.createElement('div');
+            eth.classList.add('bg3-profile', 'bg3-eth');
+            element.appendChild(eth);
+
+            const alduwynn = document.createElement('div');
+            alduwynn.classList.add('bg3-profile', 'bg3-dunevhyr');
+            element.appendChild(alduwynn);
           }
 
           return element;
@@ -451,6 +497,7 @@
             emeraldContainer.appendChild(createLlama());
             emeraldContainer.appendChild(createScout());
             emeraldContainer.appendChild(createDos2());
+            emeraldContainer.appendChild(createBg3());
           }
 
           document.body.appendChild(emeraldContainer);
